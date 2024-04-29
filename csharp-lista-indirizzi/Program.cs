@@ -123,10 +123,10 @@ namespace csharp_lista_indirizzi
                 Console.WriteLine("Tipo di dato non coretto");
                 try
                 {
-                    zipCode = FindFirstIntegerInStringArray(array);
-                    if (zipCode == "null")
+                    int zipCodeIndex = FindIndexOfZipCode(array);
+                    if (zipCodeIndex == -1)
                         throw new ValueEqualNull();
-                    return zipCode;
+                    return zipCode = array[zipCodeIndex].ToString().PadLeft(array[zipCodeIndex].Trim().Length, '0'); ;
                 }
                 catch (ValueEqualNull)
                 {
@@ -138,7 +138,7 @@ namespace csharp_lista_indirizzi
 
         public static string GetProvince(string[] array, string provinceString)
         {
-            string province = provinceString;
+            string province = provinceString.Trim();
             try
             {
                 if (province.Length != 2)
@@ -150,10 +150,10 @@ namespace csharp_lista_indirizzi
                 Console.WriteLine("Lunghezza di Province e superata! Controlliamo se esiste in stringa il valore che assomiglia a Province");
                 try
                 {
-                    province = FindProvince(array);
-                    if (province == "null")
+                    int provinceIndex = FindIndexOfProvince(array);
+                    if (provinceIndex == -1)
                         throw new ValueEqualNull();
-                    return province;
+                    return province = array[provinceIndex];
                 }
                 catch (ValueEqualNull)
                 {
@@ -162,28 +162,32 @@ namespace csharp_lista_indirizzi
                 }
             }
         }
-        public static string FindFirstIntegerInStringArray(string[] array)
+        public static int FindIndexOfZipCode(string[] array)
         {
+            int i = 0;
             foreach (string item in array)
             {
                 if (int.TryParse(item, out int result))
                 {
-                    return result.ToString().PadLeft(item.Trim().Length, '0');
+                    return i;
                 }
+                i++;
             }
-            return "null";
+            return -1;
         }
 
-        public static string FindProvince(string[] array)
+        public static int FindIndexOfProvince(string[] array)
         {
+            int i = 0;
             foreach (string item in array)
             {
                 if (item.Length == 2)
                 {
-                    return item.Trim();
+                    return i;
                 }
+                i++;
             }
-            return "null";
+            return -1;
         }
 
         //public static string GetCity(string[] array, string cityString)
