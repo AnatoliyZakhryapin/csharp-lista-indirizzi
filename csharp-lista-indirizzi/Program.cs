@@ -194,28 +194,37 @@ namespace csharp_lista_indirizzi
         {
             string city;
 
-            int streetIndex = FindIndexOfStreet(array);
-            int provinceIndex = FindIndexOfProvince(array);
-            int zipCodeIndex = FindIndexOfZipCode(array);
-
-            switch(true)
+            try
             {
-                case true when (streetIndex != -1 && provinceIndex != -1) && (streetIndex +2 == provinceIndex):
-                    city = array[streetIndex + 1];
-                    break;
-                case true when (streetIndex != -1 && zipCodeIndex != -1) && (streetIndex + 2 == zipCodeIndex):
-                    city = array[streetIndex + 1];
-                    break;
-                case true when streetIndex == -1 && provinceIndex != -1:
-                    city = array[provinceIndex - 1];
-                    break;
-                case true when streetIndex == -1 && provinceIndex == -1 && zipCodeIndex != -1:
-                    city = array[zipCodeIndex - 1];
-                    break;
-                default: return city = "City non trovato";
-            }
+                int streetIndex = FindIndexOfStreet(array);
+                int provinceIndex = FindIndexOfProvince(array);
+                int zipCodeIndex = FindIndexOfZipCode(array);
 
-            return city;
+                switch (true)
+                {
+                    case true when (streetIndex != -1 && provinceIndex != -1) && (streetIndex + 2 == provinceIndex):
+                        city = array[streetIndex + 1];
+                        break;
+                    case true when (streetIndex != -1 && zipCodeIndex != -1) && (streetIndex + 2 == zipCodeIndex):
+                        city = array[streetIndex + 1];
+                        break;
+                    case true when streetIndex == -1 && provinceIndex != -1:
+                        city = array[provinceIndex - 1];
+                        break;
+                    case true when streetIndex == -1 && provinceIndex == -1 && zipCodeIndex != -1:
+                        city = array[zipCodeIndex - 1];
+                        break;
+                    default: throw new Exception("City not found");
+                }
+                return city;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine();
+                Console.WriteLine(e.Message);
+                Console.WriteLine();
+                return city = "City non trovato";
+            }
         }
 
         public static string GetStreet(string[] array)
