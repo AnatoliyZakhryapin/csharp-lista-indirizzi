@@ -64,7 +64,7 @@ namespace csharp_lista_indirizzi
                             string name = (lineData[0] == "") ? "Indefinite" : lineData[0];
                             string surname = (lineData[1] == "") ? "Indefinite" : lineData[1];
                             string street = GetStreet(lineData);
-                            string city = (lineData[3] == "") ? "Indefinite" : lineData[3];
+                            string city = GetCity(lineData);
                             //string province = (lineData[4] == "") ? "Indefinite" : lineData[4];
                             string province = GetProvince(lineData, lineData[4]);
                             string zipCode = GetZipCode(lineData, lineData[5]);
@@ -84,7 +84,7 @@ namespace csharp_lista_indirizzi
                             string name = (lineData[0] == "") ? "Indefinite" : lineData[0];
                             string surname = (lineData[1] == "") ? "Indefinite" : lineData[1];
                             string street = GetStreet(lineData);
-                            string city = (lineData[3] == "") ? "Indefinite" : lineData[3];
+                            string city = GetCity(lineData);
                             string province = GetProvince(lineData, lineData[4]);
 
                             string zipCode = GetZipCode(lineData, lineData[5]);
@@ -181,7 +181,7 @@ namespace csharp_lista_indirizzi
             int i = 0;
             foreach (string item in array)
             {
-                if (item.Length == 2)
+                if (item.Trim().Length == 2)
                 {
                     return i;
                 }
@@ -190,10 +190,33 @@ namespace csharp_lista_indirizzi
             return -1;
         }
 
-        //public static string GetCity(string[] array, string cityString)
-        //{
-            
-        //}
+        public static string GetCity(string[] array)
+        {
+            string city;
+
+            int streetIndex = FindIndexOfStreet(array);
+            int provinceIndex = FindIndexOfProvince(array);
+            int zipCodeIndex = FindIndexOfZipCode(array);
+
+            switch(true)
+            {
+                case true when (streetIndex != -1 && provinceIndex != -1) && (streetIndex +2 == provinceIndex):
+                    city = array[streetIndex + 1];
+                    break;
+                case true when (streetIndex != -1 && zipCodeIndex != -1) && (streetIndex + 2 == zipCodeIndex):
+                    city = array[streetIndex + 1];
+                    break;
+                case true when streetIndex == -1 && provinceIndex != -1:
+                    city = array[provinceIndex - 1];
+                    break;
+                case true when streetIndex == -1 && provinceIndex == -1 && zipCodeIndex != -1:
+                    city = array[zipCodeIndex - 1];
+                    break;
+                default: return city = "City non trovato";
+            }
+
+            return city;
+        }
 
         public static string GetStreet(string[] array)
         {
