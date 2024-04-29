@@ -1,9 +1,17 @@
 ﻿using System.IO;
+using System.Xml.Linq;
 
 namespace csharp_lista_indirizzi
 {
     internal class Program
     {
+        public class ArrayLongher6element : Exception
+        {
+        }
+        public class ZipDontFund: Exception
+        {
+        }
+
         static void Main(string[] args)
         {
 
@@ -38,6 +46,7 @@ namespace csharp_lista_indirizzi
                     {
                         string line = fileStream.ReadLine();
 
+
                         i++;
                         if (i <= 1)
                             continue;
@@ -45,17 +54,41 @@ namespace csharp_lista_indirizzi
                         try
                         {
                             var lineData = line.Split(',');
-                            string name = lineData[0];
-                            string surname = lineData[1];
-                            string street = lineData[2];
-                            string city = lineData[3];
-                            string province = lineData[4];
-                            int zipCode = int.Parse(lineData[5]);
+
+                            if (lineData.Length != 6)
+                                throw new ArrayLongher6element();
+                
+                            string name = (lineData[0] == "") ? "Indefinite" : lineData[0];
+                            string surname = (lineData[1] == "") ? "Indefinite" : lineData[1];
+                            string street = (lineData[2] == "") ? "Indefinite" : lineData[2];
+                            string city = (lineData[3] == "") ? "Indefinite" : lineData[3];
+                            string province = (lineData[4] == "") ? "Indefinite" : lineData[4];
+
+                            int zipCode = GetZipCode(lineData, lineData[5]);
+
+                            User user = new User(new Person(name, surname), new Address(street, city, province, zipCode));
+                            users.Add(user);
+                        }
+                        catch (ArrayLongher6element e)
+                        {
+                            Console.WriteLine("Lunghezza array diversa");
+                            Console.WriteLine("Errore nella riga del file: " + line);
+                            Console.WriteLine(e.Message);
+                            Console.WriteLine();
+
+                            var lineData = line.Split(',');
+
+                            string name = (lineData[0] == "") ? "Indefinite" : lineData[0];
+                            string surname = (lineData[1] == "") ? "Indefinite" : lineData[1];
+                            string street = (lineData[2] == "") ? "Indefinite" : lineData[2];
+                            string city = (lineData[3] == "") ? "Indefinite" : lineData[3];
+                            string province = (lineData[4] == "") ? "Indefinite" : lineData[4];
+
+                            int zipCode = GetZipCode(lineData, lineData[5]);
 
                             User user = new User(new Person(name, surname), new Address(street, city, province, zipCode));
                             users.Add(user);
 
-                            //user.StampaInfo();
                         }
                         catch (Exception e)
                         {
@@ -65,7 +98,6 @@ namespace csharp_lista_indirizzi
                         }
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -73,6 +105,44 @@ namespace csharp_lista_indirizzi
             }
 
             return users;
+        }
+
+        public static int GetZipCode(string[] array, string code)
+        {
+            int zipCode = 0;
+            try
+            {
+                zipCode = int.Parse(code);
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Tipo di dato non coretto");
+                try
+                {
+                    if (FindFirstIntegerInStringArray(array) == -1)
+                        throw new ZipDontFund();
+                    zipCode = FindFirstIntegerInStringArray(array);
+                }
+                catch (ZipDontFund)
+                {
+                    Console.WriteLine("Zip non trovato assegnamo 0");
+                    zipCode = 0;
+                }
+            }
+
+            return zipCode;
+        }
+
+        public static int FindFirstIntegerInStringArray(string[] array)
+        {
+            foreach (string item in array)
+            {
+                if (int.TryParse(item, out int result))
+                {
+                    return result;
+                }
+            }
+            return -1;
         }
     }
 }
