@@ -64,8 +64,8 @@ namespace csharp_lista_indirizzi
                             string city = (lineData[3] == "") ? "Indefinite" : lineData[3];
                             string province = (lineData[4] == "") ? "Indefinite" : lineData[4];
 
-                            int zipCode = GetZipCode(lineData, lineData[5]);
-
+                            string zipCode = GetZipCode(lineData, lineData[5]);
+                
                             User user = new User(new Person(name, surname), new Address(street, city, province, zipCode));
                             users.Add(user);
                         }
@@ -84,7 +84,7 @@ namespace csharp_lista_indirizzi
                             string city = (lineData[3] == "") ? "Indefinite" : lineData[3];
                             string province = (lineData[4] == "") ? "Indefinite" : lineData[4];
 
-                            int zipCode = GetZipCode(lineData, lineData[5]);
+                            string zipCode = GetZipCode(lineData, lineData[5]);
 
                             User user = new User(new Person(name, surname), new Address(street, city, province, zipCode));
                             users.Add(user);
@@ -107,42 +107,41 @@ namespace csharp_lista_indirizzi
             return users;
         }
 
-        public static int GetZipCode(string[] array, string code)
+        public static string GetZipCode(string[] array, string code)
         {
-            int zipCode = 0;
+            string zipCode;
             try
             {
-                zipCode = int.Parse(code);
+                int parsedZipCode = int.Parse(code);
+                return zipCode = parsedZipCode.ToString().PadLeft(code.Trim().Length, '0');
             }
             catch (FormatException)
             {
                 Console.WriteLine("Tipo di dato non coretto");
                 try
                 {
-                    if (FindFirstIntegerInStringArray(array) == -1)
+                    if (FindFirstIntegerInStringArray(array) == "null")
                         throw new ZipDontFund();
-                    zipCode = FindFirstIntegerInStringArray(array);
+                    return zipCode = FindFirstIntegerInStringArray(array);
                 }
                 catch (ZipDontFund)
                 {
                     Console.WriteLine("Zip non trovato assegnamo 0");
-                    zipCode = 0;
+                    return zipCode = "00000";
                 }
             }
-
-            return zipCode;
         }
 
-        public static int FindFirstIntegerInStringArray(string[] array)
+        public static string FindFirstIntegerInStringArray(string[] array)
         {
             foreach (string item in array)
             {
                 if (int.TryParse(item, out int result))
                 {
-                    return result;
+                    return result.ToString().PadLeft(item.Trim().Length, '0');
                 }
             }
-            return -1;
+            return "null";
         }
     }
 }

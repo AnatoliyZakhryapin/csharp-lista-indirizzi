@@ -11,13 +11,13 @@ namespace csharp_lista_indirizzi
         private string street;
         private string city;
         private string province;
-        private int zipCode;
+        private string zipCode;
 
         // -----------
         // Costruttore
         // -----------
 
-        public Address(string street, string city, string province, int zipCode)
+        public Address(string street, string city, string province, string zipCode)
         {
             this.street = street;
             this.city = city;
@@ -47,7 +47,7 @@ namespace csharp_lista_indirizzi
             set { this.province = value; }
         }
 
-        public int ZipCode
+        public string ZipCode
         {
             get { return this.zipCode; }
             set { this.zipCode = value; }
