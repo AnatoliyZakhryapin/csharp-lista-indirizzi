@@ -120,9 +120,10 @@ namespace csharp_lista_indirizzi
                 Console.WriteLine("Tipo di dato non coretto");
                 try
                 {
-                    if (FindFirstIntegerInStringArray(array) == "null")
+                    zipCode = FindFirstIntegerInStringArray(array);
+                    if (zipCode == "null")
                         throw new ZipDontFund();
-                    return zipCode = FindFirstIntegerInStringArray(array);
+                    return zipCode;
                 }
                 catch (ZipDontFund)
                 {
