@@ -63,7 +63,7 @@ namespace csharp_lista_indirizzi
                 
                             string name = (lineData[0] == "") ? "Indefinite" : lineData[0];
                             string surname = (lineData[1] == "") ? "Indefinite" : lineData[1];
-                            string street = (lineData[2] == "") ? "Indefinite" : lineData[2];
+                            string street = GetStreet(lineData);
                             string city = (lineData[3] == "") ? "Indefinite" : lineData[3];
                             //string province = (lineData[4] == "") ? "Indefinite" : lineData[4];
                             string province = GetProvince(lineData, lineData[4]);
@@ -83,7 +83,7 @@ namespace csharp_lista_indirizzi
 
                             string name = (lineData[0] == "") ? "Indefinite" : lineData[0];
                             string surname = (lineData[1] == "") ? "Indefinite" : lineData[1];
-                            string street = (lineData[2] == "") ? "Indefinite" : lineData[2];
+                            string street = GetStreet(lineData);
                             string city = (lineData[3] == "") ? "Indefinite" : lineData[3];
                             string province = GetProvince(lineData, lineData[4]);
 
@@ -194,6 +194,23 @@ namespace csharp_lista_indirizzi
         //{
             
         //}
+
+        public static string GetStreet(string[] array)
+        {
+            string street;
+            try
+            {
+                int streetIndex = FindIndexOfStreet(array);
+                if (streetIndex == -1)
+                    throw new ValueEqualNull();
+                return street = array[streetIndex];
+            }
+            catch (ValueEqualNull)
+            {
+                Console.WriteLine("Indirizzo non trovato");
+                return street = "Indirizzo non indicato";
+            }
+        }
         public static int FindIndexOfStreet(string[] array)
         {
             int i = 0;
