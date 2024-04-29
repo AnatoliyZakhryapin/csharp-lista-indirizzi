@@ -185,5 +185,45 @@ namespace csharp_lista_indirizzi
             }
             return "null";
         }
+
+        //public static string GetCity(string[] array, string cityString)
+        //{
+            
+        //}
+        public static int FindIndexOfStreet(string[] array)
+        {
+            int i = 0;
+            foreach (string item in array)
+            {
+                if (IsStreet(item))
+                {
+                    return i;
+                }
+                i++;
+            }
+            return -1;
+        }
+        
+        public static bool IsStreet(string input)
+        {
+            string[] words = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            bool HasNumbers = false;
+            bool HasWords = false;
+
+            foreach (string word in words)
+            {
+                if (word.Any(char.IsDigit))
+                {
+                    HasNumbers = true;
+                }
+                else if (word.Any(char.IsLetter))
+                {
+                    HasWords = true;
+                }
+            }
+
+            return HasNumbers && HasWords;
+        }
     }
 }
