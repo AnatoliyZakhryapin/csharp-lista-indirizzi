@@ -8,7 +8,11 @@ namespace csharp_lista_indirizzi
         public class ArrayLongher6element : Exception
         {
         }
-        public class ZipDontFund: Exception
+        public class ValueEqualNull: Exception
+        {
+        }
+
+        public class StringLengthExceededException : Exception
         {
         }
 
@@ -46,7 +50,6 @@ namespace csharp_lista_indirizzi
                     {
                         string line = fileStream.ReadLine();
 
-
                         i++;
                         if (i <= 1)
                             continue;
@@ -62,8 +65,8 @@ namespace csharp_lista_indirizzi
                             string surname = (lineData[1] == "") ? "Indefinite" : lineData[1];
                             string street = (lineData[2] == "") ? "Indefinite" : lineData[2];
                             string city = (lineData[3] == "") ? "Indefinite" : lineData[3];
-                            string province = (lineData[4] == "") ? "Indefinite" : lineData[4];
-
+                            //string province = (lineData[4] == "") ? "Indefinite" : lineData[4];
+                            string province = GetProvince(lineData, lineData[4]);
                             string zipCode = GetZipCode(lineData, lineData[5]);
                 
                             User user = new User(new Person(name, surname), new Address(street, city, province, zipCode));
@@ -72,7 +75,7 @@ namespace csharp_lista_indirizzi
                         catch (ArrayLongher6element e)
                         {
                             Console.WriteLine("Lunghezza array diversa");
-                            Console.WriteLine("Errore nella riga del file: " + line);
+                            Console.WriteLine($"Errore trovato nella riga {i} del file: " + line);
                             Console.WriteLine(e.Message);
                             Console.WriteLine();
 
@@ -82,7 +85,7 @@ namespace csharp_lista_indirizzi
                             string surname = (lineData[1] == "") ? "Indefinite" : lineData[1];
                             string street = (lineData[2] == "") ? "Indefinite" : lineData[2];
                             string city = (lineData[3] == "") ? "Indefinite" : lineData[3];
-                            string province = (lineData[4] == "") ? "Indefinite" : lineData[4];
+                            string province = GetProvince(lineData, lineData[4]);
 
                             string zipCode = GetZipCode(lineData, lineData[5]);
 
@@ -122,10 +125,10 @@ namespace csharp_lista_indirizzi
                 {
                     zipCode = FindFirstIntegerInStringArray(array);
                     if (zipCode == "null")
-                        throw new ZipDontFund();
+                        throw new ValueEqualNull();
                     return zipCode;
                 }
-                catch (ZipDontFund)
+                catch (ValueEqualNull)
                 {
                     Console.WriteLine("Zip non trovato assegnamo 0");
                     return zipCode = "00000";
@@ -133,6 +136,32 @@ namespace csharp_lista_indirizzi
             }
         }
 
+        public static string GetProvince(string[] array, string provinceString)
+        {
+            string province = provinceString;
+            try
+            {
+                if (province.Length != 2)
+                    throw new StringLengthExceededException();
+                return province;
+            }
+            catch (StringLengthExceededException)
+            {
+                Console.WriteLine("Lunghezza di Province e superata! Controlliamo se esiste in stringa il valore che assomiglia a Province");
+                try
+                {
+                    province = FindProvince(array);
+                    if (province == "null")
+                        throw new ValueEqualNull();
+                    return province;
+                }
+                catch (ValueEqualNull)
+                {
+                    Console.WriteLine("Province non trovata assegnamo AA");
+                    return province = "AA";
+                }
+            }
+        }
         public static string FindFirstIntegerInStringArray(string[] array)
         {
             foreach (string item in array)
@@ -140,6 +169,18 @@ namespace csharp_lista_indirizzi
                 if (int.TryParse(item, out int result))
                 {
                     return result.ToString().PadLeft(item.Trim().Length, '0');
+                }
+            }
+            return "null";
+        }
+
+        public static string FindProvince(string[] array)
+        {
+            foreach (string item in array)
+            {
+                if (item.Length == 2)
+                {
+                    return item.Trim();
                 }
             }
             return "null";
