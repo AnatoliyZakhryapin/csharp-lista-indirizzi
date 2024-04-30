@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Reflection.Emit;
 using System.Xml.Linq;
 
 namespace csharp_lista_indirizzi
@@ -50,6 +51,8 @@ namespace csharp_lista_indirizzi
                     {
                         string line = fileStream.ReadLine();
 
+                        string name = "Nome non trovato", surname = "Cognome non trovato", street = "", city = "", province = "", zipCode = "";
+
                         i++;
                         if (i <= 1)
                             continue;
@@ -61,16 +64,12 @@ namespace csharp_lista_indirizzi
                             if (lineData.Length != 6)
                                 throw new ArrayLongher6element();
                 
-                            string name = GetName(lineData);
-                            string surname = GetSurname(lineData);
-                            string street = GetStreet(lineData);
-                            string city = GetCity(lineData);
-                            //string province = (lineData[4] == "") ? "Indefinite" : lineData[4];
-                            string province = GetProvince(lineData);
-                            string zipCode = GetZipCode(lineData);
-
-                            User user = new User(new Person(name, surname), new Address(street, city, province, zipCode));
-                            users.Add(user);
+                            name = GetName(lineData);
+                            surname = GetSurname(lineData);
+                            street = GetStreet(lineData);
+                            city = GetCity(lineData);
+                            province = GetProvince(lineData);
+                            zipCode = GetZipCode(lineData);    
                         }
                         catch (ArrayLongher6element e)
                         {
@@ -81,23 +80,23 @@ namespace csharp_lista_indirizzi
 
                             var lineData = line.Split(',');
 
-                            string name = GetName(lineData);
-                            string surname = GetSurname(lineData);
-                            string street = GetStreet(lineData);
-                            string city = GetCity(lineData);
-                            string province = GetProvince(lineData);
-
-                            string zipCode = GetZipCode(lineData);
-
-                            User user = new User(new Person(name, surname), new Address(street, city, province, zipCode));
-                            users.Add(user);
-
+                            name = GetName(lineData);
+                            surname = GetSurname(lineData);
+                            street = GetStreet(lineData);
+                            city = GetCity(lineData);
+                            province = GetProvince(lineData);
+                            zipCode = GetZipCode(lineData);
                         }
                         catch (Exception e)
                         {
                             Console.WriteLine("Errore nella riga del file: " + line);
                             Console.WriteLine(e.Message);
                             Console.WriteLine();
+                        }
+                        finally
+                        {
+                            User user = new User(new Person(name, surname), new Address(street, city, province, zipCode));
+                            users.Add(user);
                         }
                     }
                 }
