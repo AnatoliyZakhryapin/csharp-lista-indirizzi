@@ -61,14 +61,14 @@ namespace csharp_lista_indirizzi
                             if (lineData.Length != 6)
                                 throw new ArrayLongher6element();
                 
-                            string name = (lineData[0] == "") ? "Indefinite" : lineData[0];
-                            string surname = (lineData[1] == "") ? "Indefinite" : lineData[1];
+                            string name = GetName(lineData);
+                            string surname = GetSurname(lineData);
                             string street = GetStreet(lineData);
                             string city = GetCity(lineData);
                             //string province = (lineData[4] == "") ? "Indefinite" : lineData[4];
-                            string province = GetProvince(lineData, lineData[4]);
-                            string zipCode = GetZipCode(lineData, lineData[5]);
-                
+                            string province = GetProvince(lineData);
+                            string zipCode = GetZipCode(lineData);
+
                             User user = new User(new Person(name, surname), new Address(street, city, province, zipCode));
                             users.Add(user);
                         }
@@ -81,13 +81,13 @@ namespace csharp_lista_indirizzi
 
                             var lineData = line.Split(',');
 
-                            string name = (lineData[0] == "") ? "Indefinite" : lineData[0];
-                            string surname = (lineData[1] == "") ? "Indefinite" : lineData[1];
+                            string name = GetName(lineData);
+                            string surname = GetSurname(lineData);
                             string street = GetStreet(lineData);
                             string city = GetCity(lineData);
-                            string province = GetProvince(lineData, lineData[4]);
+                            string province = GetProvince(lineData);
 
-                            string zipCode = GetZipCode(lineData, lineData[5]);
+                            string zipCode = GetZipCode(lineData);
 
                             User user = new User(new Person(name, surname), new Address(street, city, province, zipCode));
                             users.Add(user);
@@ -110,56 +110,37 @@ namespace csharp_lista_indirizzi
             return users;
         }
 
-        public static string GetZipCode(string[] array, string code)
+        public static string GetZipCode(string[] array)
         {
             string zipCode;
             try
             {
-                int parsedZipCode = int.Parse(code);
-                return zipCode = parsedZipCode.ToString().PadLeft(code.Trim().Length, '0');
+                int zipCodeIndex = FindIndexOfZipCode(array);
+                if (zipCodeIndex == -1)
+                    throw new ValueEqualNull();
+                return zipCode = array[zipCodeIndex].ToString().PadLeft(array[zipCodeIndex].Trim().Length, '0'); ;
             }
-            catch (FormatException)
+            catch (ValueEqualNull)
             {
-                Console.WriteLine("Tipo di dato non coretto");
-                try
-                {
-                    int zipCodeIndex = FindIndexOfZipCode(array);
-                    if (zipCodeIndex == -1)
-                        throw new ValueEqualNull();
-                    return zipCode = array[zipCodeIndex].ToString().PadLeft(array[zipCodeIndex].Trim().Length, '0'); ;
-                }
-                catch (ValueEqualNull)
-                {
-                    Console.WriteLine("Zip non trovato assegnamo 0");
-                    return zipCode = "00000";
-                }
+                Console.WriteLine("Zip non trovato assegnamo 0");
+                return zipCode = "00000";
             }
         }
 
-        public static string GetProvince(string[] array, string provinceString)
+        public static string GetProvince(string[] array)
         {
-            string province = provinceString.Trim();
+            string province;
             try
             {
-                if (province.Length != 2)
-                    throw new StringLengthExceededException();
-                return province;
+                int provinceIndex = FindIndexOfProvince(array);
+                if (provinceIndex == -1)
+                    throw new ValueEqualNull();
+                return province = array[provinceIndex];
             }
-            catch (StringLengthExceededException)
+            catch (ValueEqualNull)
             {
-                Console.WriteLine("Lunghezza di Province e superata! Controlliamo se esiste in stringa il valore che assomiglia a Province");
-                try
-                {
-                    int provinceIndex = FindIndexOfProvince(array);
-                    if (provinceIndex == -1)
-                        throw new ValueEqualNull();
-                    return province = array[provinceIndex];
-                }
-                catch (ValueEqualNull)
-                {
-                    Console.WriteLine("Province non trovata assegnamo AA");
-                    return province = "AA";
-                }
+                Console.WriteLine("Province non trovata assegnamo AA");
+                return province = "AA";
             }
         }
         public static int FindIndexOfZipCode(string[] array)
@@ -278,5 +259,100 @@ namespace csharp_lista_indirizzi
 
             return HasNumbers && HasWords;
         }
+        public static string GetSurname(string[] array)
+        {
+            string surname = "Cognome non trovato"; ;
+
+            try
+            {   int arrayLength = array.Length;
+                int streetIndex = FindIndexOfStreet(array);
+                int provinceIndex = FindIndexOfProvince(array);
+                int zipCodeIndex = FindIndexOfZipCode(array);
+
+                int count = 0;
+
+                if (zipCodeIndex != -1)
+                    count++;
+
+                if (provinceIndex != -1)
+                    count++;
+
+                if (GetCity(array) != "City not found")
+                    count++;
+
+                if (streetIndex != -1)
+                    count++;
+
+                int potentialSurnameCount = arrayLength - count;
+
+                if (potentialSurnameCount >= 2)
+                {
+                    for (int i = potentialSurnameCount; i >= 0; i--)
+                    {
+                        if (!string.IsNullOrWhiteSpace(array[i - 1]))
+                        {
+                            surname = array[i - 1];
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    throw new ValueEqualNull();
+                }
+
+
+            }
+            catch (ValueEqualNull)
+            {
+                Console.WriteLine("Cognome non trovato");
+                return surname;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine();
+                Console.WriteLine(e.Message);
+                Console.WriteLine();
+            }
+            return surname;
+        }
+        public static string GetName(string[] array)
+        {
+            string name = "Nome non trovato";
+
+            try
+            {
+                string surname = GetSurname(array);
+
+                if (surname != "Cognome non trovato")
+                {
+                    int surnameIndex = Array.IndexOf(array, surname);
+
+                    string[] nameArray = new string[surnameIndex];
+                    Array.Copy(array, nameArray, surnameIndex);
+
+                    name = string.Join(" ", nameArray);
+
+                    if(name.Trim() == "")
+                        throw new ValueEqualNull();
+                } 
+                else if (array[0].Trim() != "")
+                {
+                    return name = array[0];
+                }
+            }
+            catch (ValueEqualNull)
+            {
+                Console.WriteLine("Nome non trovato");
+                return name = "Nome non trovato";
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Si è verificato un errore durante la ricerca del nome:");
+                Console.WriteLine(e.Message);
+            }
+
+            return name;
+        }   
     }
 }
