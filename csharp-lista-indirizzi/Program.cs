@@ -6,9 +6,6 @@ namespace csharp_lista_indirizzi
 {
     internal class Program
     {
-        public class ArrayLongher6element : Exception
-        {
-        }
         public class ValueEqualNull: Exception
         {
         }
@@ -60,9 +57,6 @@ namespace csharp_lista_indirizzi
                         try
                         {
                             var lineData = line.Split(',');
-
-                            if (lineData.Length != 6)
-                                throw new ArrayLongher6element();
                 
                             name = GetName(lineData);
                             surname = GetSurname(lineData);
@@ -70,22 +64,6 @@ namespace csharp_lista_indirizzi
                             city = GetCity(lineData);
                             province = GetProvince(lineData);
                             zipCode = GetZipCode(lineData);    
-                        }
-                        catch (ArrayLongher6element e)
-                        {
-                            Console.WriteLine("Lunghezza array diversa");
-                            Console.WriteLine($"Errore trovato nella riga {i} del file: " + line);
-                            Console.WriteLine(e.Message);
-                            Console.WriteLine();
-
-                            var lineData = line.Split(',');
-
-                            name = GetName(lineData);
-                            surname = GetSurname(lineData);
-                            street = GetStreet(lineData);
-                            city = GetCity(lineData);
-                            province = GetProvince(lineData);
-                            zipCode = GetZipCode(lineData);
                         }
                         catch (Exception e)
                         {
